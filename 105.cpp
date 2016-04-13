@@ -169,15 +169,16 @@ int main(void) {
     for(double epsilon = 1; epsilon > 0.000000001; epsilon /= 10) {
         cout << "Epsilon = " << epsilon << endl;
         do {
-            cout << "Enter elementary time: ";                                                      //0.000744
-            cin >> elementary_time;
-            Doings test("results.txt", epsilon, 2, elementary_time, 10000);
+            cout << "Enter elementary time: ";                                                      //0.0007444
+            cin >> elementary_time;																	//0.0011205
+            Doings test("test.txt", epsilon, 2, elementary_time, 10000);							//0.001514
             period = test.calculations();
             if(!isPowerOfTwo(period))
                 cout << "Not a power of two" << endl << endl;
         }
         while(!isPowerOfTwo(period));
         Doings test("results.txt", epsilon, 2, elementary_time, 10000);
+		period = test.calculations();
         vector<double> velosities;
         for(int i = 0; i < period; i++)
             velosities.push_back(test.get_vel(i));
