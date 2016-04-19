@@ -8,8 +8,8 @@
 
 using namespace std;
 
-int stand() {
-    return(rand() % RAND_MAX);
+double stand() {
+    return 1.0 * rand()/RAND_MAX;
 }
 
 
@@ -24,7 +24,7 @@ public:
         this->n = n;
         n_start = n;
         dispersion = n_av = n_sq_av = flag = 0;
-        results = fstream(fout);
+        results.open(fout);
         results << "Number of molecules - " << this->n << endl << endl;
         results << "Step \tn" << endl;
     }
@@ -32,18 +32,17 @@ public:
     Chamber() {};
 
     ~Chamber() {
-        molecules.clear();
         results << endl << endl;
         results.close();
     };
 
     void make_step(int step) {
-        if(stand() < n/n_start)
+        if(stand() <= 1.0*n/n_start)
 			n--;
 		else
 			n++;
 
-        if(n <= n_start/2 && !flag) {
+        if(n <= n_start/2 && flag == 0) {
             flag = 1;
             time_av = step;
             n_av = 0;
@@ -84,17 +83,23 @@ public:
 };
 
 int main(void) {
-    srand(time(0);
-    double dispersion = n_av = n_sq_av = 0;
-    int number_of_ensembles = 1;
-	
+    srand(time(0));
+
+    const int number_of_molecules = 160;
+    const int number_of_ensembles = 100;
+
+    double dispersion = 0;
+    double n_av = 0;
+    double n_sq_av = 0;
+
+
 	fstream fs("results.txt", ios::out);
 	fs.close();
-	
-    Chamber cmb(160, "results.txt");
+
 
     for(int i = 0; i < number_of_ensembles; i++) {
         cout << endl << endl << "Experiment #" << i <<endl;
+        Chamber cmb(number_of_molecules, "results.txt");
 
         for(int t = 0; t < 10000; t++) {
             cmb.make_step(t);
@@ -105,13 +110,11 @@ int main(void) {
         n_av += cmb.get_n_av();
         n_sq_av += cmb.get_n_sq_av();
 
-        cout << "dispersion / n average - 1 / sqrt(n) = " << sqrt(cmb.get_dispersion()) / cmb.get_n_av() - 1 / sqrt(160);
+        cout << "dispersion / n average = " << sqrt(cmb.get_dispersion()) / cmb.get_n_av() << endl;
+        cout << "1 / sqrt(n) = " << 1.0 / sqrt(number_of_molecules) << endl;
 
-        cmb.~Chamber();
-        Chamber cmb(160, "results.txt");
     }
 
-    cmb.~Chamber();
 
     n_av /= number_of_ensembles;
     n_sq_av /= number_of_ensembles;
@@ -120,7 +123,8 @@ int main(void) {
     cout << endl << endl << "Final results for ensembles" << endl << "n average = " << n_av << endl;
     cout << "n sq average = " << n_sq_av << endl;
     cout << "dispersion = " << dispersion << endl;
-    cout << "sqrt(dispersion) / n average = " << sqrt(dispersion) << endl;
+    cout << "sqrt(dispersion) / n average = " << sqrt(dispersion)/n_av << endl;
+    cout << "1 / sqrt(n) = " << 1.0 / sqrt(number_of_molecules) << endl;
 
     return 0;
 }
